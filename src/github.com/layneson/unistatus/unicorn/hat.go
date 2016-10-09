@@ -17,6 +17,7 @@ func (d HATProvider) Init() error {
 
 //Deinit implements the method of the Provider interface.
 func (d HATProvider) Deinit() error {
+	C.clear()
 	C.stop()
 
 	return nil

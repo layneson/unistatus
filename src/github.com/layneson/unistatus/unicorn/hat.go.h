@@ -39,6 +39,13 @@ void stop() {
     ws2811_fini(&ledstring);
 }
 
+void clear() {
+    int i;
+    for (i = 0; i < 64; i++) {
+        ledstring.channel[0].leds[i] = 0;
+    }
+}
+
 int getPixelPosition(int x, int y) {
 
     int map[8][8] = {
