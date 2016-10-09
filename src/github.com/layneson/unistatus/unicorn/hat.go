@@ -34,6 +34,9 @@ func (d HATProvider) SetBrightness(b float32) error {
 
 //SetPixel implements the method of the Provider interface.
 func (d HATProvider) SetPixel(x, y, r, g, b int) error {
+	//Flip x-axis
+	x = 7 - x
+
 	rgb := (g << 16) | (r << 8) | b // please, don't ask...
 	C.setPixel(C.int(x), C.int(y), C.uint32_t(rgb))
 
