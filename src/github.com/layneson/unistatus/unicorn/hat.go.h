@@ -18,7 +18,8 @@ ws2811_t ledstring =
     }
 };
 
-void setPixel(int pixel, uint32_t rgb) {
+void setPixel(int x, int y, uint32_t rgb) {
+    int pixel = getPixelPosition(x, y);
     ledstring.channel[0].leds[pixel] = rgb;
 }
 
