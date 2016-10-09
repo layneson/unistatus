@@ -89,6 +89,8 @@ const tickRate = 50 // ticks/second
 
 //Display implements the method of the Status interface
 func (w WeatherStatus) Display(seconds int) error {
+	unicorn.SetBrightness(0.75)
+
 	if w.condition == weather.LightRain || w.condition == weather.HeavyRain {
 		return w.displayRain(seconds)
 	} else if w.condition == weather.Clouds {
