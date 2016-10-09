@@ -4,6 +4,7 @@ package unicorn
 #include "hat.go.h"
 */
 import "C"
+import "fmt"
 
 //The HATProvider provides for a legitimate Unicorn HAT.
 type HATProvider struct{}
@@ -27,7 +28,9 @@ func (d HATProvider) Deinit() error {
 
 //SetBrightness implements the method of the Provider interface.
 func (d HATProvider) SetBrightness(b float32) error {
-	C.setBrightness(C.int(int(b / 255.0)))
+	brightness = int(b / 255.0)
+	fmt.Println("BRIGHTNESS: ", brightness)
+	C.setBrightness(C.int(brightness))
 
 	return nil
 }

@@ -1,7 +1,6 @@
 package display
 
 import (
-	"fmt"
 	"math/rand"
 	"time"
 
@@ -188,8 +187,6 @@ func (w WeatherStatus) displayRain(seconds int) error {
 
 		acounter++
 		time.Sleep((1000 / tickRate) * time.Millisecond)
-
-		fmt.Println("UPDATE")
 	}
 
 	return nil
@@ -236,8 +233,7 @@ func (w WeatherStatus) displayClouds(seconds int) error {
 
 		acounter++
 		time.Sleep((1000 / tickRate) * time.Millisecond)
-
-		fmt.Println("UPDATE")
 	}
+
 	return nil
 }
