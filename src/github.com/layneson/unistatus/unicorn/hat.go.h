@@ -40,9 +40,12 @@ void stop() {
 }
 
 void clear() {
-    int i;
-    for (i = 0; i < 64; i++) {
-        ledstring.channel[0].leds[i] = 0;
+    int x;
+    int y;
+    for (x = 0; x < 8; x++) {
+        for (y = 0; y < 8; y++) {
+            setPixel(x, y, 0);
+        }
     }
 }
 
