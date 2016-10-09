@@ -28,7 +28,7 @@ func (d HATProvider) Deinit() error {
 
 //SetBrightness implements the method of the Provider interface.
 func (d HATProvider) SetBrightness(b float32) error {
-	brightness := int(b / 255.0)
+	brightness := int(b * 255.0)
 	fmt.Println("BRIGHTNESS: ", brightness)
 	C.setBrightness(C.int(brightness))
 
