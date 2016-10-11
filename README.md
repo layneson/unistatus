@@ -5,7 +5,7 @@ Since the Unicorn HAT only supports an 8x8 pixel grid, it is not possible to dis
 
 ## Building
 1. Clone the repository onto a Raspberry Pi.
-2. Install gb (getgb.io).
+2. Install go (https://golang.org) and gb (https://getgb.io).
 3. Run `make` from inside the `unistatus` directory.
 4. Create the appropriate `credentials.json` file within the `bin` folder.
 
