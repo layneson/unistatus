@@ -1,23 +1,5 @@
 {
 	"version": 0,
 	"dependencies": [
-		{
-			"importpath": "github.com/arussellsaw/unicorn-go",
-			"repository": "https://github.com/arussellsaw/unicorn-go",
-			"revision": "14ef26d7875ebaf29d5c5b55f8eb686370d4fce1",
-			"branch": "master"
-		},
-		{
-			"importpath": "github.com/lunixbochs/struc",
-			"repository": "https://github.com/lunixbochs/struc",
-			"revision": "ae5aa8161e35c822b55526833b1635764b740770",
-			"branch": "master"
-		},
-		{
-			"importpath": "github.com/ojrac/opensimplex-go",
-			"repository": "https://github.com/ojrac/opensimplex-go",
-			"revision": "c0d2b8b324684d1e69e72eaf01f69ff700e3396a",
-			"branch": "master"
-		}
 	]
 }
