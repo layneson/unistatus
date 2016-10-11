@@ -6,6 +6,9 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
+	"time"
+
+	"github.com/layneson/unistatus/config"
 )
 
 //Condition represents a weather condition.
@@ -34,14 +37,23 @@ type Location struct {
 
 //A Provider provides information about the current weather status.
 type Provider interface {
-	//Precipitation returns the percentage chance of precipitation, using the given location and the current local time.
-	Precipitation(*Location) (int, error)
+	//Precipitation returns the percentage chance of precipitation, using the configured location and the current local time.
+	Precipitation() (int, error)
 
-	//Temperature returns the current temperature in degrees Farenheit, using the given location and the current local time.
-	Temperature(*Location) (int, error)
+	//Temperature returns the current temperature in degrees Farenheit, using the configured location and the current local time.
+	Temperature() (int, error)
 
-	//Condition returns the current weather condition (one of the values of Condition), using the given location and the current local time.
-	Condition(*Location) (Condition, error)
+	//Condition returns the current weather condition (one of the values of Condition), using the configured location and the current local time.
+	Condition() (Condition, error)
+}
+
+//A weatherCache is a cache for weather data.
+type weatherCache struct {
+	nextUpdate time.Time
+
+	precipitation int
+	temperature   int
+	condition     Condition
 }
 
 //WundergroundCredentialsKey is the key within the credentials.json file for the Wunderground API provider's key.
@@ -52,13 +64,26 @@ const WundergroundCredentialsKey = "WEATHER_PROVIDER_WUNDERGROUND_KEY"
 type Wunderground struct {
 	//key is the Wunderground API key.
 	key string
+
+	//location is the current location.
+	location *Location
+
+	//cache is the weather value cache.
+	cache *weatherCache
 }
 
 //NewWunderground takes the credentials map and returns a new Wunderground API provider.
 func NewWunderground(credentials map[string]string) (Wunderground, error) {
 	//Check credentials map for the key
 	if key, ok := credentials[WundergroundCredentialsKey]; ok {
-		return Wunderground{key: key}, nil
+		return Wunderground{
+			key: key,
+			location: &Location{
+				State: config.Current.Location.State,
+				City:  config.Current.Location.City,
+			},
+			cache: &weatherCache{nextUpdate: time.Now()},
+		}, nil
 	}
 
 	//Key does not exist within credentials map
@@ -66,8 +91,8 @@ func NewWunderground(credentials map[string]string) (Wunderground, error) {
 }
 
 //callAndUnmarshalAPI calls the Wunderground API endpoint and unmarshals the response into a wundergroundAPIResponse.
-func (w Wunderground) callAndUnmarshalAPI(loc *Location) (*wundergroundAPIResponse, error) {
-	resp, err := http.Get(fmt.Sprintf("http://api.wunderground.com/api/%s/hourly/q/%s/%s.json", w.key, loc.State, loc.City)) // Contact API endpoint
+func (w Wunderground) callAndUnmarshalAPI() (*wundergroundAPIResponse, error) {
+	resp, err := http.Get(fmt.Sprintf("http://api.wunderground.com/api/%s/hourly/q/%s/%s.json", w.key, w.location.State, w.location.City)) // Contact API endpoint
 	if err != nil {
 		return nil, err
 	}
@@ -84,9 +109,15 @@ func (w Wunderground) callAndUnmarshalAPI(loc *Location) (*wundergroundAPIRespon
 }
 
 //Precipitation fulfills the Provider Precipitation method.
-func (w Wunderground) Precipitation(loc *Location) (int, error) {
+func (w Wunderground) Precipitation() (int, error) {
+	if time.Now().Before(w.cache.nextUpdate) { // Check cache first
+		return w.cache.precipitation, nil
+	}
+
+	w.cache.nextUpdate = time.Now().Add(time.Duration(config.Current.WeatherCache.RefreshRate) * time.Second)
+
 	//Contact API endpoint and get unmarshalled response
-	winfo, err := w.callAndUnmarshalAPI(loc)
+	winfo, err := w.callAndUnmarshalAPI()
 	if err != nil {
 		return 0, err
 	}
@@ -97,9 +128,15 @@ func (w Wunderground) Precipitation(loc *Location) (int, error) {
 }
 
 //Temperature fulfills the Provider Temperature method.
-func (w Wunderground) Temperature(loc *Location) (int, error) {
+func (w Wunderground) Temperature() (int, error) {
+	if time.Now().Before(w.cache.nextUpdate) { // Check cache first
+		return w.cache.temperature, nil
+	}
+
+	w.cache.nextUpdate = time.Now().Add(time.Duration(config.Current.WeatherCache.RefreshRate) * time.Second)
+
 	//Contact API endpoint and get unmarshalled response
-	winfo, err := w.callAndUnmarshalAPI(loc)
+	winfo, err := w.callAndUnmarshalAPI()
 	if err != nil {
 		return 0, err
 	}
@@ -113,7 +150,13 @@ func (w Wunderground) Temperature(loc *Location) (int, error) {
 }
 
 //Condition fulfills the Provider Condition method.
-func (w Wunderground) Condition(loc *Location) (Condition, error) {
+func (w Wunderground) Condition() (Condition, error) {
+	if time.Now().Before(w.cache.nextUpdate) { // Check cache first
+		return w.cache.condition, nil
+	}
+
+	w.cache.nextUpdate = time.Now().Add(time.Duration(config.Current.WeatherCache.RefreshRate) * time.Second)
+
 	//TODO: MAKE THIS DO SOMETHING
 	return Clouds, nil
 }

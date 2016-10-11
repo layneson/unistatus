@@ -4,6 +4,7 @@ import (
 	"math/rand"
 	"time"
 
+	"github.com/layneson/unistatus/config"
 	"github.com/layneson/unistatus/unicorn"
 	"github.com/layneson/unistatus/weather"
 )
@@ -12,9 +13,6 @@ import (
 type WeatherStatus struct {
 	//provider is the weather.Provider which supplies the current weather data.
 	provider weather.Provider
-
-	//location is the U.S. city in which the user is located.
-	location *weather.Location
 
 	//condition is the current weather condition to be rendered.
 	condition weather.Condition
@@ -33,18 +31,18 @@ type tempIndicator struct {
 }
 
 //NewWeatherStatus creates a Weather Status with initial data and returns a pointer to it.
-func NewWeatherStatus(p weather.Provider, l *weather.Location) *WeatherStatus {
-	return &WeatherStatus{provider: p, location: l}
+func NewWeatherStatus(p weather.Provider) *WeatherStatus {
+	return &WeatherStatus{provider: p}
 }
 
 //Init implements the method of the Status interface.
 func (w *WeatherStatus) Init() error {
-	precip, err := w.provider.Precipitation(w.location) // Get precipitation percentage for next hour
+	precip, err := w.provider.Precipitation() // Get precipitation percentage for next hour
 	if err != nil {
 		return err
 	}
 
-	condition, err := w.provider.Condition(w.location)
+	condition, err := w.provider.Condition()
 	if err != nil {
 		return err
 	}
@@ -58,7 +56,7 @@ func (w *WeatherStatus) Init() error {
 		w.condition = condition
 	}
 
-	temperature, err := w.provider.Temperature(w.location)
+	temperature, err := w.provider.Temperature()
 	if err != nil {
 		return err
 	}
@@ -88,7 +86,7 @@ const tickRate = 50 // ticks/second
 
 //Display implements the method of the Status interface
 func (w WeatherStatus) Display(seconds int) error {
-	unicorn.SetBrightness(0.5)
+	unicorn.SetBrightness(config.Current.Brightness)
 
 	if w.condition == weather.LightRain || w.condition == weather.HeavyRain {
 		return w.displayRain(seconds)

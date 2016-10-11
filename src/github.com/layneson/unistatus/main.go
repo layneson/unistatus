@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"time"
 
+	"github.com/layneson/unistatus/config"
 	"github.com/layneson/unistatus/display"
 	"github.com/layneson/unistatus/unicorn"
 	"github.com/layneson/unistatus/weather"
@@ -13,12 +14,18 @@ import (
 
 const (
 	credentialsFile = "credentials.json"
+	configFile      = "config.json"
 )
 
 func main() {
 	rand.Seed(time.Now().UnixNano())
 
 	credentials, err := readCredentials(credentialsFile)
+	if err != nil {
+		panic(err)
+	}
+
+	err = config.ReadConfig(configFile)
 	if err != nil {
 		panic(err)
 	}
@@ -33,9 +40,7 @@ func main() {
 		panic(err)
 	}
 
-	location := &weather.Location{State: "NY", City: "Binghamton"}
-
-	wstatus := display.NewWeatherStatus(wprovider, location)
+	wstatus := display.NewWeatherStatus(wprovider)
 
 	err = wstatus.Init()
 	if err != nil {
