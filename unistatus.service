@@ -1,8 +1,8 @@
 [Unit]
 Description=Starts the unistatus program
 
-[Serivce]
-Type=oneshot
+[Service]
+Type=simple
 ExecStart=/usr/local/bin/unistatus
 
 [Install]

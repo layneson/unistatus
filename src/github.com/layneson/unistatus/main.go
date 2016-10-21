@@ -22,6 +22,7 @@ const (
 func main() {
 	rand.Seed(time.Now().UnixNano())
 
+	os.Chdir(os.Getenv("UNISTATUS_WORKING_DIR"))
 	credentials, err := readCredentials(credentialsFile)
 	if err != nil {
 		panic(err)
