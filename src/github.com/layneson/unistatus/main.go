@@ -59,7 +59,7 @@ func readCredentials(file string) (map[string]string, error) {
 	//Read complete file contents
 	conts, err := ioutil.ReadFile(file)
 	if err != nil {
-		if os.ErrNotExist(err) {
+		if os.IsNotExist(err) {
 			return nil, errors.New("missing credentials file")
 		}
 		return nil, err
