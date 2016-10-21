@@ -1,0 +1,9 @@
+[Unit]
+Description=Starts the unistatus program
+
+[Serivce]
+Type=oneshot
+ExecStart=/usr/local/bin/unistatus
+
+[Install]
+WantedBy=multi-user.target

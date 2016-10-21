@@ -16,3 +16,8 @@ lib:
 
 unistatus: lib
 	gb build
+
+install:
+	cp bin/unistatus-linux-arm /usr/local/bin/unistatus
+	cp unistatus.service /etc/systemd/system/
+	systemctl enable unistatus.service
