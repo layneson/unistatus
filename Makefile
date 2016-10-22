@@ -20,7 +20,7 @@ unistatus: lib
 install:
 	mkdir /opt/unistatus
 	cp bin/* /opt/unistatus/
-	ls -s /opt/unistatus/unistatus-linux-arm /usr/bin/local/unistatus
+	ln -s /opt/unistatus/unistatus-linux-arm /usr/bin/local/unistatus
 	cp unistatus.service /etc/systemd/system/
 	systemctl enable unistatus.service
 
