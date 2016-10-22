@@ -7,6 +7,7 @@ Since the Unicorn HAT only supports an 8x8 pixel grid, it is not possible to dis
 1. Clone the repository onto a Raspberry Pi.
 2. Install go (https://golang.org) and gb (https://getgb.io).
 3. Run `make` from inside the `unistatus` directory.
-4. Create the appropriate `credentials.json` file within the `bin` folder.
+4. Run `sudo make install` from inside the `unistatus` directory.
+5. Create the appropriate `credentials.json` file within the `/opt/unistatus` folder.
 
-The final binary will be located in the `bin` folder.
+The final binary will be located in the `/opt/unistatus` folder. To uninstall unistatus, run `sudo make uninstall` from within the `unistatus` directory.
